@@ -5,6 +5,17 @@
 
 > "내 아내임" 밈에서 출발 — 기억은 휘발되니까, 기념일은 다 같이 챙기자.
 
+## 미리보기
+
+<p>
+  <img src="docs/images/popup.png" width="300" alt="팝업 — 다가오는 기념일/목록" />
+  <img src="docs/images/register.png" width="300" alt="스트리머 등록" />
+</p>
+
+월별 기념일 캘린더:
+
+![월별 기념일 캘린더](docs/images/calendar.png)
+
 ## 뭘 할 수 있나요?
 
 - 🗂️ **버튜버 정보 등록/수정** — 생일·데뷔일·방송 일정·프로필을 누구나 채워넣는 위키 방식
