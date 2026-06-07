@@ -64,8 +64,7 @@
     if (v.twitter)
       html += row("🐦 트위터", `<a href="${escapeAttr(v.twitter)}" target="_blank" style="color:#00ffa3">link</a>`);
     if (!html) html = `<div class="cmw-empty">등록된 항목이 없어요.</div>`;
-    if (v.editorNick)
-      html += `<div class="cmw-empty" style="font-size:11px;margin-top:6px">마지막 수정: ${escapeHtml(v.editorNick)}</div>`;
+    // editorNick은 기록만 하고 화면에는 표시하지 않음
     body.innerHTML = html + `<button class="cmw-edit">✎ 정보 수정</button>`;
     body.querySelector(".cmw-edit").onclick = () => renderForm(card, channelId, v);
   }
