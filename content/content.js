@@ -1,14 +1,12 @@
 // content.js — 치지직 채널/방송 페이지에서 버튜버 정보 카드를 띄움
 (function () {
-  // 치지직 채널 식별자(채널 해시) 추출
-  // 예: https://chzzk.naver.com/abc123...        (채널 홈)
-  //     https://chzzk.naver.com/live/abc123...   (라이브)
+  // 채널 홈에서만 카드 표시.
+  // O: https://chzzk.naver.com/{streamerHash}
+  // X: /live/.., /video/.., /{hash}/community 등 다른 모든 링크
   function getChannelId() {
     const seg = location.pathname.split("/").filter(Boolean);
-    if (seg.length === 0) return null;
-    if (seg[0] === "live" || seg[0] === "video") return seg[1] || null;
-    // 채널 홈은 첫 세그먼트가 곧 채널 해시 (32자 hex)
-    if (/^[0-9a-f]{20,}$/i.test(seg[0])) return seg[0];
+    // 세그먼트가 정확히 1개이고 그것이 채널 해시일 때만
+    if (seg.length === 1 && /^[0-9a-f]{20,}$/i.test(seg[0])) return seg[0];
     return null;
   }
 
@@ -174,15 +172,21 @@
 
   // SPA(치지직)라 URL이 바뀌어도 페이지 리로드가 안 됨 → 주기적으로 채널 변화 감지
   let lastChannel = null;
+  function removeCard() {
+    const existing = document.getElementById("cmw-card");
+    if (existing) existing.remove();
+  }
+
   function tick() {
     const ch = getChannelId();
     if (ch && ch !== lastChannel) {
       lastChannel = ch;
-      const existing = document.getElementById("cmw-card");
-      if (existing) existing.remove();
+      removeCard();
       mountCard(ch);
     } else if (!ch) {
+      // 채널 홈이 아니면 카드 숨김
       lastChannel = null;
+      removeCard();
     }
   }
   setInterval(tick, 1500);
