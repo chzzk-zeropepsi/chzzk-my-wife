@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "치지직 내 아내임 (chzzk-my-wife)",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "치지직 버튜버의 생일·데뷔일·방송 일정을 함께 기록하고 공유하는 확장",
   "permissions": ["storage", "alarms", "notifications"],
   "host_permissions": [
