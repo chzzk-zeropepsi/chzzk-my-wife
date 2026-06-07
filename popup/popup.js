@@ -56,6 +56,8 @@
   const moreBtn = document.getElementById("more");
   const upCntEl = document.getElementById("up-cnt");
   const regCntEl = document.getElementById("reg-cnt");
+  const followOnlyEl = document.getElementById("follow-only");
+  const followHintEl = document.getElementById("follow-hint");
 
   const PAGE = 30; // 한 번에 그릴 목록 개수
   let allVtubers = [];
@@ -63,9 +65,17 @@
   let lastResults = [];
   let currentQ = "";
   let shown = PAGE; // 검색 결과에서 현재까지 보여준 개수
+  let followOnly = false;
+  let followings = new Set(); // 내가 팔로우한 채널ID
+
+  // 팔로우 필터가 켜져 있으면 팔로우한 버튜버만
+  function visibleVtubers() {
+    if (!followOnly) return allVtubers;
+    return allVtubers.filter((v) => followings.has(v.channelId || v.id));
+  }
 
   function renderUpcoming() {
-    const events = Anniversary.upcoming(allVtubers, 30);
+    const events = Anniversary.upcoming(visibleVtubers(), 30);
     lastUpcoming = events;
     upCntEl.textContent = events.length ? ` ${events.length}` : "";
     if (!events.length) {
@@ -90,15 +100,21 @@
 
   function renderResults() {
     const q = currentQ.trim().toLowerCase();
-    // 검색어가 없으면 등록된 전체 목록을 이름순으로 보여줌
+    const base = visibleVtubers();
+    // 검색어가 없으면 (필터된) 전체 목록을 이름순으로 보여줌
     const list = q
-      ? allVtubers.filter((v) => (v.name || "").toLowerCase().includes(q))
-      : allVtubers.slice().sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+      ? base.filter((v) => (v.name || "").toLowerCase().includes(q))
+      : base.slice().sort((a, b) => (a.name || "").localeCompare(b.name || ""));
     lastResults = list;
-    regCntEl.textContent = allVtubers.length ? ` ${allVtubers.length}명` : "";
+    regCntEl.textContent = base.length ? ` ${base.length}명` : "";
 
     if (!list.length) {
-      resultsEl.innerHTML = `<div class="empty">${q ? "검색 결과 없음" : "아직 등록된 버튜버가 없어요."}</div>`;
+      const emptyMsg = q
+        ? "검색 결과 없음"
+        : followOnly
+        ? "팔로우한 버튜버 중 등록된 사람이 없어요."
+        : "아직 등록된 버튜버가 없어요.";
+      resultsEl.innerHTML = `<div class="empty">${emptyMsg}</div>`;
       moreBtn.style.display = "none";
       return;
     }
@@ -156,6 +172,51 @@
   moreBtn.addEventListener("click", () => {
     shown += PAGE;
     renderResults();
+  });
+
+  // ----- 팔로우 필터 -----
+  const FOLLOW_CACHE = "followingsCache";
+  const FOLLOW_TTL = 5 * 60 * 1000; // 5분
+
+  async function loadFollowings(force) {
+    try {
+      const o = await chrome.storage.local.get(FOLLOW_CACHE);
+      const c = o[FOLLOW_CACHE];
+      if (c && Array.isArray(c.ids)) {
+        followings = new Set(c.ids);
+        if (!force && Date.now() - (c.ts || 0) < FOLLOW_TTL) return;
+      }
+    } catch (_) {}
+    const ids = await Chzzk.getFollowings(); // 실패 시 throw
+    followings = ids;
+    try {
+      await chrome.storage.local.set({ [FOLLOW_CACHE]: { ts: Date.now(), ids: [...ids] } });
+    } catch (_) {}
+  }
+
+  followOnlyEl.addEventListener("change", async () => {
+    followOnly = followOnlyEl.checked;
+    shown = PAGE;
+    try {
+      await chrome.storage.local.set({ followOnly });
+    } catch (_) {}
+    if (followOnly) {
+      followHintEl.className = "hint";
+      followHintEl.textContent = "팔로잉 불러오는 중...";
+      try {
+        await loadFollowings(false);
+        followHintEl.textContent = `팔로잉 ${followings.size}명`;
+      } catch (e) {
+        followOnly = false;
+        followOnlyEl.checked = false;
+        followHintEl.className = "hint warn";
+        followHintEl.textContent = "팔로잉을 못 불러왔어요 (치지직 로그인 확인)";
+        console.error("[chzzk-my-wife]", e);
+      }
+    } else {
+      followHintEl.textContent = "";
+    }
+    renderHome();
   });
 
   function renderHome() {
@@ -355,6 +416,24 @@
     }
   }
 
-  // 시작
-  loadHome();
+  // 시작 — 저장된 팔로우 필터 상태 복원 후 로드
+  (async () => {
+    try {
+      const o = await chrome.storage.local.get("followOnly");
+      followOnly = !!o.followOnly;
+    } catch (_) {}
+    followOnlyEl.checked = followOnly;
+    if (followOnly) {
+      followHintEl.textContent = "팔로잉 불러오는 중...";
+      try {
+        await loadFollowings(false);
+        followHintEl.textContent = `팔로잉 ${followings.size}명`;
+      } catch (e) {
+        followHintEl.className = "hint warn";
+        followHintEl.textContent = "팔로잉을 못 불러왔어요 (치지직 로그인 확인)";
+        console.error("[chzzk-my-wife]", e);
+      }
+    }
+    loadHome();
+  })();
 })();

@@ -56,6 +56,24 @@
       .legend b {
         color: #eaeaea;
       }
+      .switch {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        color: #eaeaea;
+        user-select: none;
+      }
+      .switch input {
+        accent-color: #00ffa3;
+        cursor: pointer;
+      }
+      #follow-hint {
+        color: #9aa0a6;
+      }
+      #follow-hint.warn {
+        color: #ffb84d;
+      }
       .wrap {
         padding: 0 20px 40px;
       }
@@ -165,7 +183,12 @@
     <div class="legend">
       <span>🎂 <b>생일</b></span>
       <span>✨ <b>데뷔일</b> (N주년)</span>
-      <span style="margin-left:auto">항목 클릭 → 치지직 채널 열기</span>
+      <label class="switch" style="margin-left:auto">
+        <input type="checkbox" id="follow-only" />
+        <span>⭐ 팔로우한 버튜버만</span>
+      </label>
+      <span id="follow-hint"></span>
+      <span>항목 클릭 → 치지직 채널 열기</span>
     </div>
     <div class="wrap">
       <div id="grid"><div class="status">불러오는 중...</div></div>
@@ -174,6 +197,7 @@
     <script src="../config.js"></script>
     <script src="../lib/firestore.js"></script>
     <script src="../lib/anniversary.js"></script>
+    <script src="../lib/chzzk.js"></script>
     <script src="calendar.js"></script>
   </body>
 </html>

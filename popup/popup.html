@@ -128,6 +128,36 @@
         font-weight: 700;
         margin-left: 4px;
       }
+      .filterbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 14px;
+        border-bottom: 1px solid #2a2a30;
+        background: #18181d;
+      }
+      .switch {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-size: 13px;
+        user-select: none;
+      }
+      .switch input {
+        width: auto;
+        margin: 0;
+        accent-color: #00ffa3;
+        cursor: pointer;
+      }
+      .hint {
+        font-size: 11px;
+        color: #9aa0a6;
+        margin-left: auto;
+      }
+      .hint.warn {
+        color: #ffb84d;
+      }
       .more {
         width: 100%;
         padding: 7px;
@@ -230,6 +260,13 @@
 
     <!-- 홈: 다가오는 기념일 + 검색 -->
     <div id="view-home" class="view active">
+      <div class="filterbar">
+        <label class="switch">
+          <input type="checkbox" id="follow-only" />
+          <span>⭐ 팔로우한 버튜버만 보기</span>
+        </label>
+        <span id="follow-hint" class="hint"></span>
+      </div>
       <div class="section">
         <h3>🎉 다가오는 기념일 (30일 이내)<span id="up-cnt" class="count"></span></h3>
         <div id="upcoming" class="scroll"><div class="empty">불러오는 중...</div></div>

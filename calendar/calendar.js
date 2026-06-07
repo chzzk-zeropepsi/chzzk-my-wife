@@ -2,10 +2,19 @@
 (function () {
   const monthEl = document.getElementById("month");
   const gridEl = document.getElementById("grid");
+  const followOnlyEl = document.getElementById("follow-only");
+  const followHintEl = document.getElementById("follow-hint");
   const today = new Date();
   let viewY = today.getFullYear();
   let viewM = today.getMonth(); // 0-based
   let vtubers = [];
+  let followOnly = false;
+  let followings = new Set(); // 내가 팔로우한 채널ID (팝업과 storage 공유)
+
+  function visibleVtubers() {
+    if (!followOnly) return vtubers;
+    return vtubers.filter((v) => followings.has(v.channelId || v.id));
+  }
 
   function escHtml(s) {
     return String(s == null ? "" : s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
@@ -20,7 +29,7 @@
     const add = (day, ev) => {
       (map[day] = map[day] || []).push(ev);
     };
-    for (const v of vtubers) {
+    for (const v of visibleVtubers()) {
       const bd = Anniversary.parseMonthDay(v.birthday);
       if (bd && bd.month === viewM + 1) add(bd.day, { type: "birthday", v });
       const dv = Anniversary.parseMonthDay(v.debutDate);
@@ -100,8 +109,70 @@
     render();
   };
 
+  // ----- 팔로우 필터 (팝업과 storage 키 공유) -----
+  const FOLLOW_CACHE = "followingsCache";
+  const FOLLOW_TTL = 5 * 60 * 1000;
+
+  async function loadFollowings(force) {
+    try {
+      const o = await chrome.storage.local.get(FOLLOW_CACHE);
+      const c = o[FOLLOW_CACHE];
+      if (c && Array.isArray(c.ids)) {
+        followings = new Set(c.ids);
+        if (!force && Date.now() - (c.ts || 0) < FOLLOW_TTL) return;
+      }
+    } catch (_) {}
+    const ids = await Chzzk.getFollowings();
+    followings = ids;
+    try {
+      await chrome.storage.local.set({ [FOLLOW_CACHE]: { ts: Date.now(), ids: [...ids] } });
+    } catch (_) {}
+  }
+
+  followOnlyEl.addEventListener("change", async () => {
+    followOnly = followOnlyEl.checked;
+    try {
+      await chrome.storage.local.set({ followOnly });
+    } catch (_) {}
+    if (followOnly) {
+      followHintEl.className = "";
+      followHintEl.textContent = "팔로잉 불러오는 중...";
+      try {
+        await loadFollowings(false);
+        followHintEl.textContent = `팔로잉 ${followings.size}명`;
+      } catch (e) {
+        followOnly = false;
+        followOnlyEl.checked = false;
+        followHintEl.className = "warn";
+        followHintEl.textContent = "팔로잉을 못 불러왔어요 (치지직 로그인 확인)";
+        console.error("[chzzk-my-wife]", e);
+      }
+    } else {
+      followHintEl.textContent = "";
+    }
+    render();
+  });
+
   // 팝업과 동일한 캐시를 공유 → 즉시 표시 후 네트워크 갱신
   async function load() {
+    // 팔로우 필터 상태 복원
+    try {
+      const o = await chrome.storage.local.get("followOnly");
+      followOnly = !!o.followOnly;
+    } catch (_) {}
+    followOnlyEl.checked = followOnly;
+    if (followOnly) {
+      followHintEl.textContent = "팔로잉 불러오는 중...";
+      try {
+        await loadFollowings(false);
+        followHintEl.textContent = `팔로잉 ${followings.size}명`;
+      } catch (e) {
+        followHintEl.className = "warn";
+        followHintEl.textContent = "팔로잉을 못 불러왔어요 (치지직 로그인 확인)";
+        console.error("[chzzk-my-wife]", e);
+      }
+    }
+
     try {
       const o = await chrome.storage.local.get("vtubersCache");
       const c = o.vtubersCache;
