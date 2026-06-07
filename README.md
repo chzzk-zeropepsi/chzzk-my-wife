@@ -1,5 +1,8 @@
 # 💍 chzzk-my-wife (치지직 "내 아내임")
 
+[![Downloads](https://img.shields.io/github/downloads/chzzk-zeropepsi/chzzk-my-wife/total?label=%EB%8B%A4%EC%9A%B4%EB%A1%9C%EB%93%9C&color=00c073)](https://github.com/chzzk-zeropepsi/chzzk-my-wife/releases)
+[![Latest release](https://img.shields.io/github/v/release/chzzk-zeropepsi/chzzk-my-wife?label=%EB%B2%84%EC%A0%84&color=00c073)](https://github.com/chzzk-zeropepsi/chzzk-my-wife/releases/latest)
+
 치지직 버튜버의 **생일·데뷔일·방송 일정**을 함께 기록하고,
 같은 확장을 쓰는 사람들끼리 **공유**하는 크롬 확장입니다.
 
