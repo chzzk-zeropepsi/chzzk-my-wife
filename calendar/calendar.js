@@ -139,7 +139,7 @@
       followHintEl.textContent = "팔로잉 불러오는 중...";
       try {
         await loadFollowings(false);
-        followHintEl.textContent = `팔로잉 ${followings.size}명`;
+        followHintEl.textContent = "";
       } catch (e) {
         followOnly = false;
         followOnlyEl.checked = false;
@@ -165,7 +165,7 @@
       followHintEl.textContent = "팔로잉 불러오는 중...";
       try {
         await loadFollowings(false);
-        followHintEl.textContent = `팔로잉 ${followings.size}명`;
+        followHintEl.textContent = "";
       } catch (e) {
         followHintEl.className = "warn";
         followHintEl.textContent = "팔로잉을 못 불러왔어요 (치지직 로그인 확인)";
