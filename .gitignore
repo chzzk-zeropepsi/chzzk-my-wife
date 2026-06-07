@@ -1,0 +1,6 @@
+# 로컬 Firebase 실제 키가 들어간 설정 (config.example.js를 복사해서 config.js 생성)
+# 단, MV3 확장은 config.js를 실제로 로드하므로 커밋이 필요할 수 있음.
+# 공개 배포 시에는 config.js를 커밋하지 말고 빌드 단계에서 주입하세요.
+*.zip
+.DS_Store
+node_modules/

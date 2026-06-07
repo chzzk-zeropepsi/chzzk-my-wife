@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>내 아내임 — 기념일 캘린더</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: #16161a;
+        color: #eaeaea;
+        font-family: "Pretendard", -apple-system, sans-serif;
+        font-size: 14px;
+      }
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 20px;
+        background: #00ffa3;
+        color: #061a12;
+      }
+      .topbar .brand {
+        font-weight: 800;
+        font-size: 17px;
+        flex: 1;
+      }
+      .topbar button {
+        background: #061a12;
+        color: #00ffa3;
+        border: none;
+        border-radius: 8px;
+        padding: 7px 12px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .topbar .month {
+        font-weight: 800;
+        font-size: 18px;
+        min-width: 130px;
+        text-align: center;
+      }
+      .legend {
+        display: flex;
+        gap: 16px;
+        padding: 10px 20px;
+        color: #9aa0a6;
+        font-size: 12px;
+      }
+      .legend b {
+        color: #eaeaea;
+      }
+      .wrap {
+        padding: 0 20px 40px;
+      }
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 6px;
+      }
+      .cal-head {
+        text-align: center;
+        font-weight: 700;
+        color: #9aa0a6;
+        padding: 6px 0;
+      }
+      .cal-head.sun {
+        color: #ff6b6b;
+      }
+      .cal-head.sat {
+        color: #6ba8ff;
+      }
+      .cal-cell {
+        min-height: 104px;
+        background: #1f1f25;
+        border: 1px solid #26262e;
+        border-radius: 8px;
+        padding: 6px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .cal-cell.empty {
+        background: transparent;
+        border: none;
+      }
+      .cal-cell.today {
+        border-color: #00ffa3;
+        box-shadow: 0 0 0 1px #00ffa3 inset;
+      }
+      .cal-day {
+        font-weight: 700;
+        margin-bottom: 4px;
+      }
+      .cal-day.sun {
+        color: #ff6b6b;
+      }
+      .cal-day.sat {
+        color: #6ba8ff;
+      }
+      .cal-events {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        overflow-y: auto;
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 6px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .chip.birthday {
+        background: #3a2233;
+      }
+      .chip.debut {
+        background: #1f3330;
+      }
+      .chip:hover {
+        outline: 1px solid #00ffa3;
+      }
+      .chip img {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+      .chip .cname {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .chip .cnt {
+        color: #00ffa3;
+        font-weight: 700;
+        margin-left: auto;
+        flex-shrink: 0;
+      }
+      .status {
+        padding: 40px;
+        text-align: center;
+        color: #9aa0a6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <span class="brand">💍 내 아내임 — 기념일 캘린더</span>
+      <button id="prev">◀</button>
+      <span class="month" id="month">—</span>
+      <button id="next">▶</button>
+      <button id="today">오늘</button>
+    </div>
+    <div class="legend">
+      <span>🎂 <b>생일</b></span>
+      <span>✨ <b>데뷔일</b> (N주년)</span>
+      <span style="margin-left:auto">항목 클릭 → 치지직 채널 열기</span>
+    </div>
+    <div class="wrap">
+      <div id="grid"><div class="status">불러오는 중...</div></div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script src="../lib/firestore.js"></script>
+    <script src="../lib/anniversary.js"></script>
+    <script src="calendar.js"></script>
+  </body>
+</html>

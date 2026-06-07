@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <style>
+      body {
+        width: 340px;
+        margin: 0;
+        font-family: "Pretendard", -apple-system, sans-serif;
+        background: #1b1b1f;
+        color: #eaeaea;
+        font-size: 13px;
+      }
+      .head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 14px;
+        background: #00ffa3;
+        color: #061a12;
+        font-weight: 800;
+        font-size: 15px;
+      }
+      .head .brand {
+        flex: 1;
+      }
+      .head .cal-btn {
+        background: #061a12;
+        color: #00ffa3;
+        border: none;
+        border-radius: 7px;
+        padding: 6px 10px;
+        font-weight: 700;
+        font-size: 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+      .tabs {
+        display: flex;
+        border-bottom: 1px solid #2a2a30;
+      }
+      .tabs button {
+        flex: 1;
+        padding: 10px;
+        background: #1b1b1f;
+        color: #9aa0a6;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .tabs button.active {
+        color: #00ffa3;
+        border-bottom-color: #00ffa3;
+      }
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
+      .section {
+        padding: 12px 14px;
+        border-bottom: 1px solid #2a2a30;
+      }
+      .section h3 {
+        margin: 0 0 8px;
+        font-size: 12px;
+        color: #9aa0a6;
+        font-weight: 700;
+      }
+      .ann {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+      }
+      .ann .name {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ann .dday {
+        color: #00ffa3;
+        font-weight: 700;
+      }
+      .ann .tag {
+        font-size: 11px;
+        color: #9aa0a6;
+      }
+      .ann.clickable {
+        cursor: pointer;
+        border-radius: 6px;
+        padding-left: 4px;
+        padding-right: 4px;
+      }
+      .ann.clickable:hover {
+        background: #202028;
+      }
+      .open-link {
+        color: #9aa0a6;
+        font-size: 15px;
+        padding: 0 4px;
+        text-decoration: none;
+      }
+      .open-link:hover {
+        color: #00ffa3;
+      }
+      .empty {
+        color: #9aa0a6;
+        line-height: 1.5;
+      }
+      .scroll {
+        max-height: 240px;
+        overflow-y: auto;
+      }
+      .scroll::-webkit-scrollbar {
+        width: 8px;
+      }
+      .scroll::-webkit-scrollbar-thumb {
+        background: #2a2a30;
+        border-radius: 4px;
+      }
+      .count {
+        color: #00ffa3;
+        font-weight: 700;
+        margin-left: 4px;
+      }
+      .more {
+        width: 100%;
+        padding: 7px;
+        margin-top: 6px;
+        background: #23232a;
+        color: #00ffa3;
+        border: none;
+        border-radius: 6px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .more:hover {
+        background: #2a2a32;
+      }
+      input {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 7px 9px;
+        margin: 3px 0;
+        background: #101014;
+        border: 1px solid #2a2a30;
+        border-radius: 6px;
+        color: #eaeaea;
+      }
+      label {
+        color: #9aa0a6;
+        font-size: 11px;
+      }
+      a {
+        color: #00ffa3;
+        text-decoration: none;
+      }
+      .list-item {
+        padding: 7px 0;
+        display: flex;
+        gap: 9px;
+        align-items: center;
+        border-bottom: 1px solid #23232a;
+        cursor: pointer;
+      }
+      .list-item:hover {
+        background: #202028;
+      }
+      .list-item img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: #2a2a30;
+        flex-shrink: 0;
+      }
+      .list-item .name {
+        flex: 1;
+      }
+      .list-item .sub {
+        font-size: 11px;
+        color: #9aa0a6;
+      }
+      .btn {
+        width: 100%;
+        padding: 9px;
+        margin-top: 8px;
+        background: #00ffa3;
+        color: #061a12;
+        border: none;
+        border-radius: 8px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: default;
+      }
+      .link {
+        background: transparent;
+        border: none;
+        color: #00ffa3;
+        cursor: pointer;
+        padding: 4px 0;
+        font-size: 12px;
+      }
+      .status {
+        font-size: 11px;
+        padding: 6px 14px;
+        color: #9aa0a6;
+      }
+      .status.warn {
+        color: #ffb84d;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="head">
+      <span class="brand">💍 내 아내임</span>
+      <button id="open-cal" class="cal-btn">📅 캘린더</button>
+    </div>
+    <div class="tabs">
+      <button id="tab-home" class="active">🎉 기념일/검색</button>
+      <button id="tab-reg">＋ 스트리머 등록</button>
+    </div>
+
+    <!-- 홈: 다가오는 기념일 + 검색 -->
+    <div id="view-home" class="view active">
+      <div class="section">
+        <h3>🎉 다가오는 기념일 (30일 이내)<span id="up-cnt" class="count"></span></h3>
+        <div id="upcoming" class="scroll"><div class="empty">불러오는 중...</div></div>
+      </div>
+      <div class="section">
+        <h3>🔍 등록된 버튜버<span id="reg-cnt" class="count"></span> <span style="font-weight:400">(클릭해서 수정)</span></h3>
+        <input id="search" placeholder="이름으로 검색" />
+        <div id="results" class="scroll"></div>
+        <button id="more" class="more" style="display:none"></button>
+      </div>
+    </div>
+
+    <!-- 등록: 치지직 검색 → 선택 → 생일/데뷔일 입력 -->
+    <div id="view-reg" class="view">
+      <div id="login-status" class="status">로그인 확인 중...</div>
+      <div class="section" id="reg-search-box">
+        <h3>🔎 치지직에서 스트리머 찾기</h3>
+        <input id="reg-search" placeholder="치지직 닉네임 검색" />
+        <div id="reg-results"></div>
+      </div>
+      <div class="section" id="reg-form-box" style="display: none"></div>
+    </div>
+
+    <script src="../config.js"></script>
+    <script src="../lib/firestore.js"></script>
+    <script src="../lib/anniversary.js"></script>
+    <script src="../lib/auth.js"></script>
+    <script src="../lib/chzzk.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
