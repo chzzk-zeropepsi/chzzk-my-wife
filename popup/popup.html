@@ -113,7 +113,7 @@
         line-height: 1.5;
       }
       .scroll {
-        max-height: 240px;
+        max-height: 420px;
         overflow-y: auto;
       }
       .scroll::-webkit-scrollbar {
@@ -258,7 +258,7 @@
       <button id="tab-reg">＋ 스트리머 등록</button>
     </div>
 
-    <!-- 홈: 다가오는 기념일 + 검색 -->
+    <!-- 홈: 다가오는 기념일 -->
     <div id="view-home" class="view active">
       <div class="filterbar">
         <label class="switch">
@@ -270,12 +270,6 @@
       <div class="section">
         <h3>🎉 다가오는 기념일 (30일 이내)<span id="up-cnt" class="count"></span></h3>
         <div id="upcoming" class="scroll"><div class="empty">불러오는 중...</div></div>
-      </div>
-      <div class="section">
-        <h3>🔍 등록된 버튜버<span id="reg-cnt" class="count"></span> <span style="font-weight:400">(클릭해서 수정)</span></h3>
-        <input id="search" placeholder="이름으로 검색" />
-        <div id="results" class="scroll"></div>
-        <button id="more" class="more" style="display:none"></button>
       </div>
     </div>
 

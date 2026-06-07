@@ -51,20 +51,12 @@
 
   // ===================== 홈 =====================
   const upcomingEl = document.getElementById("upcoming");
-  const searchEl = document.getElementById("search");
-  const resultsEl = document.getElementById("results");
-  const moreBtn = document.getElementById("more");
   const upCntEl = document.getElementById("up-cnt");
-  const regCntEl = document.getElementById("reg-cnt");
   const followOnlyEl = document.getElementById("follow-only");
   const followHintEl = document.getElementById("follow-hint");
 
-  const PAGE = 30; // 한 번에 그릴 목록 개수
   let allVtubers = [];
   let lastUpcoming = [];
-  let lastResults = [];
-  let currentQ = "";
-  let shown = PAGE; // 검색 결과에서 현재까지 보여준 개수
   let followOnly = false;
   let followings = new Set(); // 내가 팔로우한 채널ID
 
@@ -98,58 +90,7 @@
     });
   }
 
-  function renderResults() {
-    const q = currentQ.trim().toLowerCase();
-    const base = visibleVtubers();
-    // 검색어가 없으면 (필터된) 전체 목록을 이름순으로 보여줌
-    const list = q
-      ? base.filter((v) => (v.name || "").toLowerCase().includes(q))
-      : base.slice().sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-    lastResults = list;
-    regCntEl.textContent = base.length ? ` ${base.length}명` : "";
-
-    if (!list.length) {
-      const emptyMsg = q
-        ? "검색 결과 없음"
-        : followOnly
-        ? "팔로우한 버튜버 중 등록된 사람이 없어요."
-        : "아직 등록된 버튜버가 없어요.";
-      resultsEl.innerHTML = `<div class="empty">${emptyMsg}</div>`;
-      moreBtn.style.display = "none";
-      return;
-    }
-
-    const page = list.slice(0, shown);
-    resultsEl.innerHTML = page
-      .map((v, i) => {
-        const url = v.channelUrl || `https://chzzk.naver.com/${v.id}`;
-        const bits = [];
-        if (v.birthday) bits.push(`🎂 ${v.birthday}`);
-        if (v.debutDate) bits.push(`✨ ${v.debutDate}`);
-        return `<div class="list-item" data-i="${i}" title="클릭해서 수정">
-          ${avatar(v.profileImage, 32)}
-          <span class="name">${escapeHtml(v.name || v.id)}<br>
-          <span class="sub">${escapeHtml(bits.join("  "))}</span></span>
-          <a class="open-link" href="${escapeAttr(url)}" target="_blank" title="치지직 채널 열기">↗</a>
-        </div>`;
-      })
-      .join("");
-    resultsEl.querySelectorAll(".list-item").forEach((el) => {
-      el.onclick = () => editFromHome(lastResults[Number(el.dataset.i)]);
-      const link = el.querySelector(".open-link");
-      if (link) link.onclick = (ev) => ev.stopPropagation();
-    });
-
-    const remaining = list.length - page.length;
-    if (remaining > 0) {
-      moreBtn.style.display = "";
-      moreBtn.textContent = `더 보기 (${remaining}명 남음)`;
-    } else {
-      moreBtn.style.display = "none";
-    }
-  }
-
-  // 등록 탭의 수정 폼을 홈 목록에서 바로 연다 (채널 페이지 방문 불필요)
+  // 다가오는 기념일 항목에서 바로 수정 폼을 연다 (채널 페이지 방문 불필요)
   function editFromHome(v) {
     if (!v) return;
     activate(tabReg, viewReg);
@@ -163,16 +104,6 @@
       image: v.profileImage || "",
     });
   }
-
-  searchEl.addEventListener("input", (e) => {
-    currentQ = e.target.value;
-    shown = PAGE; // 새 검색 시 페이지 리셋
-    renderResults();
-  });
-  moreBtn.addEventListener("click", () => {
-    shown += PAGE;
-    renderResults();
-  });
 
   // ----- 팔로우 필터 -----
   const FOLLOW_CACHE = "followingsCache";
@@ -196,7 +127,6 @@
 
   followOnlyEl.addEventListener("change", async () => {
     followOnly = followOnlyEl.checked;
-    shown = PAGE;
     try {
       await chrome.storage.local.set({ followOnly });
     } catch (_) {}
@@ -221,7 +151,6 @@
 
   function renderHome() {
     renderUpcoming();
-    renderResults();
   }
 
   const CACHE_KEY = "vtubersCache";
